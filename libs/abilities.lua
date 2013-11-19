@@ -266,7 +266,7 @@ end
 
 function cute.RP() --Rip
 	if (cute.bossID()~=63053 and cute.ttd("target") > 4) 
-		and ((GetComboPoints("player")>=5 and cute.rpr()==0) or (GetComboPoints("player")>=4 and cute.rpp()>=95 and cute.ttd("target") > 30 and cute.rrr() > 0 and cute.rrr()<=11.5) or (GetComboPoints("player")>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd("target")>=15))
+		and ((GetComboPoints("player")>=5 and cute.rpr()==0) or (GetComboPoints("player")>=4 and cute.rpp()>=95 and cute.ttd("target") > 30 and cute.rrr() > 0 and cute.rrr()<=1.5) or (GetComboPoints("player")>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd("target")>=15))
 	then
 		return true
 	else
