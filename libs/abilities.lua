@@ -131,7 +131,7 @@ end
 
 function cute.MglOp() --Mangle: Opener
 	if not SpellIsTargeting() 
-		and (UnitLevel("player") < 54 or cute.GlyphCheck(127540)==false or cute.behind()==false) 
+		and (UnitLevel("player") < 54 or cute.GlyphCheck(127540)==false	or cute.behind("target")==false) 
 		and UnitIsPVP("player")==nil
 	then
 		return true
@@ -152,9 +152,9 @@ end
 function cute.MotW() --Mark of the Wild
 	cute.GroupInfo()
 	if (not IsMounted() or UnitBuffID("player",40120)) then
-		for i=1,#cute.members do 
-			if not cute.HaveBuff(cute.members[i].Unit,{115921,20217,1126,90363}) 
-				and (#cute.members==select(5,GetInstanceInfo()) or select(2,IsInInstance())=="none") 
+		for i=1,#cutemembers do 
+			if not cute.HaveBuff(cutemembers[i].Unit,{115921,20217,1126,90363}) 
+				and (#cutemembers==select(5,GetInstanceInfo()) or select(2,IsInInstance())=="none") 
 			then 
 				return true 
 			else
@@ -200,6 +200,7 @@ function cute.Pnc() --Pounce
 	if not SpellIsTargeting() 
 		and UnitIsPVP("player") --Code better checks for PvP Servers
 		and not UnitCanCooperate("player", "target")  
+		and cute.behind("target")==true
 	then
 		return true
 	else
@@ -233,6 +234,7 @@ function cute.Rvg() --Ravage: Opener
 		and (UnitBuffID("player",81022) or IsStealthed()) 
 		and not UnitCanCooperate("player", "target")  
 		and UnitIsPVP("player")==nil 
+		and cute.behind("target")==true
 	then
 		return true
 	else
@@ -301,7 +303,9 @@ function cute.RkF() --Rake: Filler
 end
 
 function cute.ShrF() --Shred: Filler (Glyph)
-	if ((UnitBuffID("player",135700) or UnitBuffID("player",106951) or select(2, GetPowerRegen("player"))>=15) and cute.GlyphCheck(127540)==true) or cute.behind()==true then
+	if ((UnitBuffID("player",106951) or UnitBuffID("player",106951) or select(2, GetPowerRegen("player"))>=15) and cute.GlyphCheck(127540)==true 
+		or cute.behind("target")==true)
+	then
 		return true
 	else
 		return false

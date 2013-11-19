@@ -1,7 +1,6 @@
 -- Initialize tables
 if not cute then cute = {} end
 
---function cute.general()
 -- Convert Spell ID to Spell Name
 function UnitBuffID(unit, spell, filter)
 	if not unit or unit == nil or not UnitExists(unit) then 
@@ -127,11 +126,9 @@ function cute.thp()
 	end
 end
 
---Line of Sight Check
-if not tLOS then tLOS={} end
-if not fLOS then fLOS=CreateFrame("Frame") end
-
-function cute.LineOfSight(target)
+function cute.LineOfSight(target)		--Line of Sight Check
+	if not tLOS then tLOS={} end
+	if not fLOS then fLOS=CreateFrame("Frame") end
 	local updateRate=3
 	--local x1, y1 = PQR_UnitInfo(target)
 	fLOS:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -168,14 +165,14 @@ function cute.LineOfSight(target)
 					table.sort(tLOS,function(x,y) return x.time>y.time end)
 					for i=1,#tLOS do
 						if tLOS[i].time == nil then
-							--local GetTime()
-							time = GetTime()
+							local lostime = GetTime()
+							timelos = GetTime()
 						else
-							local time=tLOS[i].time
-							time = tLOS[i].time
+							local lostime=tLOS[i].time
+							timelos = tLOS[i].time
 						end
 						--local time=tLOS[i].time or GetTime()
-						if GetTime()>time+updateRate then
+						if GetTime()>timelos+updateRate then
 							tremove(tLOS,i)
 						end
 					end
@@ -200,9 +197,59 @@ function cute.LineOfSight(target)
 	end
 end
 
--- Dummy Check
-function cute.dummy()
-	dummies = {
+function cute.behind(target)			--Behind Check
+	if not tBEH then tBEH={} end
+	if not fBEH then fBEH=CreateFrame("Frame") end
+	local updateRate=3
+	fBEH:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	function fBEHOnEvent(self,event,...)
+		if event=="COMBAT_LOG_EVENT_UNFILTERED" then
+			local cuteLOG={...}			
+			if cuteLOG and cuteLOG[2] and cuteLOG[2]=="SPELL_CAST_FAILED" then
+				local player=UnitGUID("player") or ""
+				if cuteLOG[4] and cuteLOG[4]==player then 
+					if cuteLOG[15] then
+						if cuteLOG[15]==SPELL_FAILED_NOT_BEHIND then						
+							tinsert(tBEH,{unit=target,behtime=GetTime()})
+						end
+					end
+				end
+			else				
+				if #tBEH > 0 then
+					table.sort(tBEH,function(x,y) return x.behtime>y.behtime end)
+					for i=1,#tBEH do
+						if tBEH[i].behtime == nil then
+							local cutetime = GetTime()
+							timebeh = cutetime
+						else
+							local cutetime = tBEH[i].behtime
+							timebeh = cutetime
+						end
+						--local time=tLOS[i].time or GetTime()
+						if GetTime()>timebeh+updateRate then
+							tremove(tBEH,i)
+						end
+					end
+				end
+			end
+		end
+	end
+	fBEH:SetScript("OnEvent",fBEHOnEvent)
+	if #tBEH > 0 then
+		for i=1,#tBEH do
+			if tBEH and tBEH[i] and tBEH[i].unit==target then
+				return false
+			else 
+				--return false
+			end
+		end
+	else
+		return true
+	end
+end
+
+function cute.dummy()					-- Dummy Check
+	cutedummies = {
 		31146, --Raider's Training Dummy - Lvl ??
 		67127, --Training Dummy - Lvl 90
 		46647, --Training Dummy - Lvl 85
@@ -214,170 +261,100 @@ function cute.dummy()
 		32545, --Initiate's Training Dummy - Lvl 55 
 		32541, --Initiate's Training Dummy - Lvl 55 (Scarlet Enclave) 
 	}
-	for i=1, #dummies do
+	for i=1, #cutedummies do
 		if UnitExists("target") then
-			dummyID = tonumber(UnitGUID("target"):sub(-13, -9), 16)
+			cutedummyID = tonumber(UnitGUID("target"):sub(-13, -9), 16)
 		else
-			dummyID = 0
+			cutedummyID = 0
 		end
-		if dummyID == dummies[i] then
+		if cutedummyID == cutedummies[i] then
 			return true
+		else
+			return false
 		end	
 	end
 end
 
--- Rotation Timer
-function cute.timecheck()
-	if sTimer == nil then
-		sTimer = 0
+function cute.timecheck()				-- Rotation Timer
+	if cuteTimer == nil then
+		cuteTimer = 0
 	end
-	if cTime == nil then
-		cute.cTime = 0
+	if cutecTime == nil then
+		cutecTime = 0
 	end
-	if UnitAffectingCombat("player") and sTimer == 0 then
-		 sTimer = GetTime()
+	if UnitAffectingCombat("player") and cuteTimer == 0 then
+		 cuteTimer = GetTime()
 	end
-	if sTimer > 0 then
-		 cute.cTime = (GetTime() - sTimer)
+	if cuteTimer > 0 then
+		 cutecTime = (GetTime() - cuteTimer)
 	end
 	if not UnitAffectingCombat("player") and not UnitExists("target") then
-		sTimer = 0
-		cute.cTime = 0
+		cuteTimer = 0
+		cutecTime = 0
 	end
-	return cute.cTime
+	return cutecTime
 end
 
--- Error Check
-function cute.CheckUIError(var1)
-	if not delay then
-		delay = 0
-	end
-	if not fooframe then 
-		fooframe = CreateFrame("Frame")
-	end
 
-	fooframe:RegisterEvent("UI_ERROR_MESSAGE")
-	fooframe:SetScript("OnEvent", function(self, event, ...)
-		local msg = ...;
-		if (msg == var1) then
-			error = true
-			delay = GetTime()
-		end
-	end);
-	
-	if GetTime() - delay > 2 then
-		delay = 0
-		error = false
+if UnitExists("target") then			-- Dummy 5min DPS Test
+	local cTime = cute.timecheck()
+	local cDummy = cute.dummy()
+	if cTime >= 300 and cDummy then  
+		StopAttack()
+		ClearTarget()
+		print("5 Minute Dummy Test Concluded - Profile Stopped")
 	end
-	return error
 end
 
--- Behind Check
-function cute.behind()
-	if behindTimer == nil then
-		behindTimer = 0
- 	end
-	local BehindCheck = cute.CheckUIError(SPELL_FAILED_NOT_BEHIND)
-	if BehindCheck==nil then
-		BehindCheck = true
-	end
-	bTimer = GetTime() - behindTimer
-	if BehindCheck and behindTimer == 0 then
-		behindTimer = GetTime()
-		behind = false
-	end
-	if not BehindCheck and bTimer > 0 then
-		behindTimer = 0
-		behind = true
-	end
-	if bTimer > 3 and bTimer < 10 then
-		behindTimer = 0
-		behind = false
-	end
-	return behind
+function cute.round2(cutenum, cuteidp)	-- Round
+  cutemult = 10^(cuteidp or 0)
+  return math.floor(cutenum * cutemult + 0.5) / cutemult
 end
 
----Spell Check
--- check = nil
--- function check(spell, unit)
-	-- unit = unit or t;
-    -- --spell = string.format("%s",GetSpellInfo(sp))
-    -- if UnitExists(unit) 
-   		-- and UnitCanAttack("player", unit) == 1
-   		-- and not UnitIsDeadOrGhost(unit)
-    	-- and not LineOfSight(unit)
-    	-- --and IsSpellKnown(spell)
-    	-- --and PQR_SpellAvailable(spell)
-    	-- --and IsPlayerSpell(spell)
-    	-- and IsUsableSpell(spell)==1
-    	-- and GetSpellCooldown(spell)==0
-    -- then 
-       	-- if SpellHasRange(spell)==1 then
-           	-- if IsSpellInRange(GetSpellInfo(spell),unit)~=1 then
-       			-- return false
-       		-- else
-       			-- return true
-       		-- end
-    	-- else
-	   		-- return true
-    	-- end
-   	-- else 
-    	-- return false
-    -- end
--- end
-
---- Round
-function cute.round2(num, idp)
-  mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
-end
-
---- Time to Die
---ttd = nil
-function cute.ttd(unit)
+function cute.ttd(unit)					-- Time to Die
 	unit = unit or "target";
-	if thpcurr == nil then
-		thpcurr = 0
+	if cutethpcurr == nil then
+		cutethpcurr = 0
 	end
-	if thpstart == nil then
-		thpstart = 0
+	if cutethpstart == nil then
+		cutethpstart = 0
 	end
-	if timestart == nil then
-		timestart = 0
+	if cutetimestart == nil then
+		cutetimestart = 0
 	end
 	if UnitExists(unit) and not UnitIsDeadOrGhost(unit) then
-		if currtar ~= UnitGUID(unit) then
-			priortar = currtar
-			currtar = UnitGUID(unit)
+		if cutecurrtar ~= UnitGUID(unit) then
+			cutepriortar = cutecurrtar
+			cutecurrtar = UnitGUID(unit)
 		end
-		if thpstart==0 and timestart==0 then
-			thpstart = UnitHealth(unit)
-			timestart = GetTime()
+		if cutethpstart==0 and cutetimestart==0 then
+			cutethpstart = UnitHealth(unit)
+			cutetimestart = GetTime()
 		else
-			thpcurr = UnitHealth(unit)
-			timecurr = GetTime()
-			if thpcurr >= thpstart then
-				thpstart = thpcurr
-				timeToDie = 999
+			cutethpcurr = UnitHealth(unit)
+			cutetimecurr = GetTime()
+			if cutethpcurr >= cutethpstart then
+				cutethpstart = cutethpcurr
+				cutetimeToDie = 999
 			else
-				if ((timecurr - timestart)==0) or ((thpstart - thpcurr)==0) then
-					timeToDie = 999
+				if ((cutetimecurr - cutetimestart)==0) or ((cutethpstart - cutethpcurr)==0) then
+					cutetimeToDie = 999
 				else
-					timeToDie = cute.round2(thpcurr/((thpstart - thpcurr) / (timecurr - timestart)),2)
+					cutetimeToDie = cute.round2(cutethpcurr/((cutethpstart - cutethpcurr) / (cutetimecurr - cutetimestart)),2)
 				end
 			end
 		end
-	elseif not UnitExists(unit) or currtar ~= UnitGUID(unit) then
-		currtar = 0 
-		priortar = 0
-		thpstart = 0
-		timestart = 0
-		timeToDie = 0
+	elseif not UnitExists(unit) or cutecurrtar ~= UnitGUID(unit) then
+		cutecurrtar = 0 
+		cutepriortar = 0
+		cutethpstart = 0
+		cutetimestart = 0
+		cutetimeToDie = 0
 	end
-	if timeToDie==nil then
+	if cutetimeToDie==nil then
 		return 999
 	else
-		return timeToDie
+		return cutetimeToDie
 	end
 end	
 
@@ -470,22 +447,22 @@ function cute.CanHeal(tar)
 end
 
 function cute.GroupInfo()
-	cute.members, group = { { Unit = "player", HP = cute.CalculateHP("player") } }, { low = 0, tanks = { } }		
+	cutemembers, group = { { Unit = "player", HP = cute.CalculateHP("player") } }, { low = 0, tanks = { } }		
   	group.type = IsInRaid() and "raid" or "party" 
   	group.number = GetNumGroupMembers()
   	if group.number > 0 then
   		for i=1,group.number do 
   			if cute.CanHeal(group.type..i) then 
 				local unit, hp = group.type..i, cute.CalculateHP(group.type..i) 
-				table.insert( cute.members,{ Unit = unit, HP = hp } ) 
+				table.insert( cutemembers,{ Unit = unit, HP = hp } ) 
 				if hp < 90 then group.low = group.low + 1 end 
 				if UnitGroupRolesAssigned(unit) == "TANK" then table.insert(group.tanks,unit) end 
   			end 
   		end 
-  		if group.type == "raid" and #cute.members > 1 then table.remove(cute.members,1) end 
-  		table.sort(cute.members, function(x,y) return x.HP < y.HP end)
+  		if group.type == "raid" and #cutemembers > 1 then table.remove(cutemembers,1) end 
+  		table.sort(cutemembers, function(x,y) return x.HP < y.HP end)
   		local customtarget = cute.CanHeal("target") and "target" -- or CanHeal("mouseover") and GetMouseFocus() ~= WorldFrame and "mouseover" 
-  		if customtarget then table.sort(cute.members, function(x) return UnitIsUnit(customtarget,x.Unit) end) end 
+  		if customtarget then table.sort(cutemembers, function(x) return UnitIsUnit(customtarget,x.Unit) end) end 
 	end
 end
 
@@ -505,82 +482,82 @@ end
   	-- end
 -- end
 
---Symbiosis Priority Cast
-function classPrio(tar)
-    local class = select(3,UnitClass(tar))
+-- --Symbiosis Priority Cast
+-- function classPrio(tar)
+    -- local class = select(3,UnitClass(tar))
    
-    if class == 1 then --Warrior
-            return 1
-    elseif class == 2 then --Paladin
-            return 5
-    elseif class == 3 then --Hunter
-            return 8
-    elseif class == 4 then --Rogue
-            return 4
-    elseif class == 5 then --Priest
-            return 6
-    elseif class == 6 then --Deathknight
-            return 7
-    elseif class == 7 then --Shaman
-            return 2
-    elseif class == 8 then --Mage
-            return 9
-    elseif class == 9 then --Warlock
-            return 3
-    elseif class == 10 then --Monk
-            return 10
-    elseif class == 11 then --Druid
-            return 11
-    end
-end
+    -- if class == 1 then --Warrior
+            -- return 1
+    -- elseif class == 2 then --Paladin
+            -- return 5
+    -- elseif class == 3 then --Hunter
+            -- return 8
+    -- elseif class == 4 then --Rogue
+            -- return 4
+    -- elseif class == 5 then --Priest
+            -- return 6
+    -- elseif class == 6 then --Deathknight
+            -- return 7
+    -- elseif class == 7 then --Shaman
+            -- return 2
+    -- elseif class == 8 then --Mage
+            -- return 9
+    -- elseif class == 9 then --Warlock
+            -- return 3
+    -- elseif class == 10 then --Monk
+            -- return 10
+    -- elseif class == 11 then --Druid
+            -- return 11
+    -- end
+-- end
  
-local symIDs = {
- 110478, --DK
- 110479, --Hunter
- 110482, --Made
- 110483, --Monk
- 110484, --Paladin
- 110485, --Priest
- 110486, --Rogue
- 110488, --Shaman
- 110490, --Warlock
- 110491 --Warrior
-}
+-- local symIDs = {
+ -- 110478, --DK
+ -- 110479, --Hunter
+ -- 110482, --Made
+ -- 110483, --Monk
+ -- 110484, --Paladin
+ -- 110485, --Priest
+ -- 110486, --Rogue
+ -- 110488, --Shaman
+ -- 110490, --Warlock
+ -- 110491 --Warrior
+-- }
  
-function cute.HasSymb(tar)
-    for i=1, #symIDs do
-        local hasSym = select(15,UnitBuffID(tar,symIDs[i]))
-        local class = select(3,UnitClass(tar))
+-- function cute.HasSymb(tar)
+    -- for i=1, #symIDs do
+        -- local hasSym = select(15,UnitBuffID(tar,symIDs[i]))
+        -- local class = select(3,UnitClass(tar))
  
-        if hasSym or class == 11 then
-                return true
-        else
-                return false
-        end
-    end
-end
+        -- if hasSym or class == 11 then
+                -- return true
+        -- else
+                -- return false
+        -- end
+    -- end
+-- end
  
-function cute.SymMem()
---	symmem, symgroup = { { Unit = "player", Prio = classPrio("Player"), Class = select(2, UnitClass("Player")),ClassID = select(3,UnitClass("Player")) } }, { low = 0, tanks = { } }
-    symmem, symgroup = { {Prio = 12 } }, { low = 0, tanks = { } }
-    symgroup.type = IsInRaid() and "raid" or "party"
-   	symgroup.number = GetNumGroupMembers()
-	if symgroup.number > 0 then   
-    	for i=1,symgroup.number do
-        	if cute.CanHeal(symgroup.type..i) and not cute.HasSymb(symgroup.type..i) then
-        		local unit, prio, class, classID = symgroup.type..i, classPrio(symgroup.type..i), select(2, UnitClass(symgroup.type..i)), select(3,UnitClass(symgroup.type..i))
-        		table.insert( symmem,{ Unit = unit, Prio = prio, Class = class, ClassID = classID } )
+-- function cute.SymMem()
+-- --	symmem, symgroup = { { Unit = "player", Prio = classPrio("Player"), Class = select(2, UnitClass("Player")),ClassID = select(3,UnitClass("Player")) } }, { low = 0, tanks = { } }
+    -- symmem, symgroup = { {Prio = 12 } }, { low = 0, tanks = { } }
+    -- symgroup.type = IsInRaid() and "raid" or "party"
+   	-- symgroup.number = GetNumGroupMembers()
+	-- if symgroup.number > 0 then   
+    	-- for i=1,symgroup.number do
+        	-- if cute.CanHeal(symgroup.type..i) and not cute.HasSymb(symgroup.type..i) then
+        		-- local unit, prio, class, classID = symgroup.type..i, classPrio(symgroup.type..i), select(2, UnitClass(symgroup.type..i)), select(3,UnitClass(symgroup.type..i))
+        		-- table.insert( symmem,{ Unit = unit, Prio = prio, Class = class, ClassID = classID } )
  
-        		if UnitGroupRolesAssigned(unit) == "TANK" then table.insert(symgroup.tanks,unit) end
-       		end
-    	end
+        		-- if UnitGroupRolesAssigned(unit) == "TANK" then table.insert(symgroup.tanks,unit) end
+       		-- end
+    	-- end
    
-    	if symgroup.type == "Raid" and #symmem > 1 then table.remove(symmem,1) end
-    	table.sort(symmem, function(x,y) return x.Prio < y.Prio end)
-  --  local customtarget = CanHeal("target") and "target" -- or CanHeal("mouseover") and GetMouseFocus() ~= WorldFrame and "mouseover"
-  --  if customtarget then table.sort(symmem, function(x) return UnitIsUnit(customtarget,x.Unit) end) end
-	end
-end
+    	-- if symgroup.type == "Raid" and #symmem > 1 then table.remove(symmem,1) end
+    	-- table.sort(symmem, function(x,y) return x.Prio < y.Prio end)
+  -- --  local customtarget = CanHeal("target") and "target" -- or CanHeal("mouseover") and GetMouseFocus() ~= WorldFrame and "mouseover"
+  -- --  if customtarget then table.sort(symmem, function(x) return UnitIsUnit(customtarget,x.Unit) end) end
+	-- end
+-- end
 
 --Tabled Cast Time Checking for When you Last Cast Something.
 cute.CheckCastTime = {}

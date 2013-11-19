@@ -8,14 +8,7 @@ if not cute then cute = {} end
 -- --cute.SymMem()
 --cute.dummy()
 --cute.timecheck()
--- Dummy 5min DPS Test
-if UnitExists("target") then
-	if cute.cTime >= 300 and cute.dummy() then  
-		StopAttack()
-		ClearTarget()
-		print("5 Minute Dummy Test Concluded - Profile Stopped")
-	end
-end
+
 
 -- cute.SpellList = {  
 -- ------ABILITIES-------
