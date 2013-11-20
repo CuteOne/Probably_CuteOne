@@ -30,7 +30,7 @@ function cute.RB() --Rebirth
 	if UnitExists("mouseover") 
 		and UnitIsDeadOrGhost("mouseover") 
 		and UnitCanCooperate("player", "mouseover")     
-		and not cute.LineOfSight("mouseover")
+		--and not cute.LineOfSight("mouseover")
 		and IsSpellInRange(GetSpellInfo(20484),"mouseover")==1 
 	then
 		return true
@@ -41,7 +41,7 @@ end
 
 function cute.RV() --Revive
 	if UnitCanCooperate("player", "mouseover")     
-		and not cute.LineOfSight("mouseover")
+		--and not cute.LineOfSight("mouseover")
 		and IsSpellInRange(GetSpellInfo(20484),"mouseover")==1
 		and UnitExists("mouseover")
 		and UnitIsDeadOrGhost("mouseover")

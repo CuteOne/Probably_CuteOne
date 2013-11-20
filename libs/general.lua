@@ -126,76 +126,76 @@ function cute.thp()
 	end
 end
 
-function cute.LineOfSight(target)		--Line of Sight Check
-	if not tLOS then tLOS={} end
-	if not fLOS then fLOS=CreateFrame("Frame") end
-	local updateRate=3
-	--local x1, y1 = PQR_UnitInfo(target)
-	fLOS:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	function fLOSOnEvent(self,event,...)
-		if event=="COMBAT_LOG_EVENT_UNFILTERED" then
-			local cLOG={...}			
-			if cLOG and cLOG[2] and cLOG[2]=="SPELL_CAST_FAILED" then
-				local player=UnitGUID("player") or ""
-				if cLOG[4] and cLOG[4]==player then 
-					if cLOG[15] then
-						if cLOG[15]==SPELL_FAILED_LINE_OF_SIGHT 
-						or cLOG[15]==SPELL_FAILED_NOT_INFRONT 
-						or cLOG[15]==SPELL_FAILED_OUT_OF_RANGE 
-						or cLOG[15]==SPELL_FAILED_UNIT_NOT_INFRONT 
-						or cLOG[15]==SPELL_FAILED_UNIT_NOT_BEHIND 
-						or cLOG[15]==SPELL_FAILED_NOT_BEHIND 
-						or cLOG[15]==SPELL_FAILED_MOVING 
-						or cLOG[15]==SPELL_FAILED_IMMUNE 
-						or cLOG[15]==SPELL_FAILED_FLEEING 
-						or cLOG[15]==SPELL_FAILED_BAD_TARGETS 
-						--or cLOG[15]==SPELL_FAILED_NO_MOUNTS_ALLOWED 
-						or cLOG[15]==SPELL_FAILED_STUNNED 
-						or cLOG[15]==SPELL_FAILED_SILENCED 
-						or cLOG[15]==SPELL_FAILED_NOT_IN_CONTROL 
-						--or cLOG[15]==Your vision of the target is obscured?
-						then						
-							--tinsert(tLOS,{unit=target,time=GetTime(),x=x1,y=y1})
-							tinsert(tLOS,{unit=target,tlostime=GetTime()})
-						end
-					end
-				end
-			else				
-				if #tLOS > 0 then
-					table.sort(tLOS,function(x,y) return x.tlostime>y.tlostime end)
-					for i=1,#tLOS do
-						if tLOS[i].tlostime == nil then
-							local lostime = GetTime()
-							timelos = GetTime()
-						else
-							local lostime=tLOS[i].tlostime
-							timelos = tLOS[i].tlostime
-						end
-						--local time=tLOS[i].time or GetTime()
-						if GetTime()>timelos+updateRate then
-							tremove(tLOS,i)
-						end
-					end
-				end
-			end
-		end
-	end
-	fLOS:SetScript("OnEvent",fLOSOnEvent)
-	if #tLOS > 0 then
-		for i=1,#tLOS do
-			if tLOS and tLOS[i] and tLOS[i].unit==target 
-			--and (tLOS[i].x - 5) <= x1 and (tLOS[i].x + 5) >= x1 and (tLOS[i].y - 5) <= y1 and (tLOS[i].y + 5) >= y1  
-			then
-				--PQR_WriteToChat("\124cFFFF55FFLoS Name: "..UnitName(target)) 
-				return true
-			else 
-				--return false
-			end
-		end
-	else
-		return false
-	end
-end
+-- function cute.LineOfSight(target)		--Line of Sight Check
+	-- if not tLOS then tLOS={} end
+	-- if not fLOS then fLOS=CreateFrame("Frame") end
+	-- local updateRate=3
+	-- --local x1, y1 = PQR_UnitInfo(target)
+	-- fLOS:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	-- function fLOSOnEvent(self,event,...)
+		-- if event=="COMBAT_LOG_EVENT_UNFILTERED" then
+			-- local cLOG={...}			
+			-- if cLOG and cLOG[2] and cLOG[2]=="SPELL_CAST_FAILED" then
+				-- local player=UnitGUID("player") or ""
+				-- if cLOG[4] and cLOG[4]==player then 
+					-- if cLOG[15] then
+						-- if cLOG[15]==SPELL_FAILED_LINE_OF_SIGHT 
+						-- or cLOG[15]==SPELL_FAILED_NOT_INFRONT 
+						-- or cLOG[15]==SPELL_FAILED_OUT_OF_RANGE 
+						-- or cLOG[15]==SPELL_FAILED_UNIT_NOT_INFRONT 
+						-- or cLOG[15]==SPELL_FAILED_UNIT_NOT_BEHIND 
+						-- or cLOG[15]==SPELL_FAILED_NOT_BEHIND 
+						-- or cLOG[15]==SPELL_FAILED_MOVING 
+						-- or cLOG[15]==SPELL_FAILED_IMMUNE 
+						-- or cLOG[15]==SPELL_FAILED_FLEEING 
+						-- or cLOG[15]==SPELL_FAILED_BAD_TARGETS 
+						-- --or cLOG[15]==SPELL_FAILED_NO_MOUNTS_ALLOWED 
+						-- or cLOG[15]==SPELL_FAILED_STUNNED 
+						-- or cLOG[15]==SPELL_FAILED_SILENCED 
+						-- or cLOG[15]==SPELL_FAILED_NOT_IN_CONTROL 
+						-- --or cLOG[15]==Your vision of the target is obscured?
+						-- then						
+							-- --tinsert(tLOS,{unit=target,time=GetTime(),x=x1,y=y1})
+							-- tinsert(tLOS,{unit=target,tlostime=GetTime()})
+						-- end
+					-- end
+				-- end
+			-- else				
+				-- if #tLOS > 0 then
+					-- table.sort(tLOS,function(x,y) return x.tlostime>y.tlostime end)
+					-- for i=1,#tLOS do
+						-- if tLOS[i].tlostime == nil then
+							-- local lostime = GetTime()
+							-- timelos = GetTime()
+						-- else
+							-- local lostime=tLOS[i].tlostime
+							-- timelos = tLOS[i].tlostime
+						-- end
+						-- --local time=tLOS[i].time or GetTime()
+						-- if GetTime()>timelos+updateRate then
+							-- tremove(tLOS,i)
+						-- end
+					-- end
+				-- end
+			-- end
+		-- end
+	-- end
+	-- fLOS:SetScript("OnEvent",fLOSOnEvent)
+	-- if #tLOS > 0 then
+		-- for i=1,#tLOS do
+			-- if tLOS and tLOS[i] and tLOS[i].unit==target 
+			-- --and (tLOS[i].x - 5) <= x1 and (tLOS[i].x + 5) >= x1 and (tLOS[i].y - 5) <= y1 and (tLOS[i].y + 5) >= y1  
+			-- then
+				-- --PQR_WriteToChat("\124cFFFF55FFLoS Name: "..UnitName(target)) 
+				-- return true
+			-- else 
+				-- --return false
+			-- end
+		-- end
+	-- else
+		-- return false
+	-- end
+-- end
 
 function cute.behind(target)			--Behind Check
 	if not tBEH then tBEH={} end
@@ -442,7 +442,7 @@ end
 
 function cute.CanHeal(tar)
   if UnitInRange(tar) and UnitCanCooperate("player",tar) and not UnitIsEnemy("player",tar) 
-  and not UnitIsCharmed(tar) and not UnitIsDeadOrGhost(tar) and not cute.LineOfSight(tar) 
+  and not UnitIsCharmed(tar) and not UnitIsDeadOrGhost(tar) --and not cute.LineOfSight(tar) 
   then return true end 
 end
 
