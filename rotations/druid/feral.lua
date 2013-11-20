@@ -18,6 +18,13 @@
 	"modifier.rcontrol",
  }},
  
+ {"768", { 		--Cat Form
+	"@cute.CF()",
+	"!player.buff(768)",	--Cat Form
+	"!player.buff(108288)",	--Heart of the Wild	
+	"player.buff(1126)" 	--Mark of the Wild
+ }},
+ 
  {{		--Interrupts
  
 	{"33786", {		--Cyclone: Focus Target
@@ -386,6 +393,7 @@
 	}, "player"},  
  
 	{"5215", {		--Prowl
+		"@cute.Prl()",
 		"!player.buff(5212)",	--Prowl
 		"player.buff(768)",		--Cat Form
 		"target.exists",
@@ -426,15 +434,15 @@
 		"player.energy >= 50"
 	}, "target"}, 
  
-	{"33876", {	--Mangle: Opener
-		"@cute.MglOp()",
-		"!modifier.alt",
-		"!player.casting",
-		"player.alive",
-		"player.buff(127538)",	--Savage Roar
-		"player.range <= 8",
-		"player.buff(768)"		--Cat Form	
-	}, "target"}, 
+	-- {"33876", {	--Mangle: Opener
+		-- "@cute.MglOp()",
+		-- "!modifier.alt",
+		-- "!player.casting",
+		-- "player.alive",
+		-- "player.buff(127538)",	--Savage Roar
+		-- "player.range <= 8",
+		-- "player.buff(768)"		--Cat Form	
+	-- }, "target"}, 
  
 	{"pause", {	--Pause Rotation
 		"@cute.Pause()",
