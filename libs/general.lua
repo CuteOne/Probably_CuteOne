@@ -156,20 +156,20 @@ function cute.LineOfSight(target)		--Line of Sight Check
 						--or cLOG[15]==Your vision of the target is obscured?
 						then						
 							--tinsert(tLOS,{unit=target,time=GetTime(),x=x1,y=y1})
-							tinsert(tLOS,{unit=target,time=GetTime()})
+							tinsert(tLOS,{unit=target,tlostime=GetTime()})
 						end
 					end
 				end
 			else				
 				if #tLOS > 0 then
-					table.sort(tLOS,function(x,y) return x.time>y.time end)
+					table.sort(tLOS,function(x,y) return x.tlostime>y.tlostime end)
 					for i=1,#tLOS do
-						if tLOS[i].time == nil then
+						if tLOS[i].tlostime == nil then
 							local lostime = GetTime()
 							timelos = GetTime()
 						else
-							local lostime=tLOS[i].time
-							timelos = tLOS[i].time
+							local lostime=tLOS[i].tlostime
+							timelos = tLOS[i].tlostime
 						end
 						--local time=tLOS[i].time or GetTime()
 						if GetTime()>timelos+updateRate then

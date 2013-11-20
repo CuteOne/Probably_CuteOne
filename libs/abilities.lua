@@ -141,6 +141,16 @@ function cute.MglOp() --Mangle: Opener
 	end
 end
 
+function cute.Mgl() --Mangle
+	if (GetComboPoints("player") < 5 or UnitBuffID("player",135700))
+		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())  
+	then
+		return true
+	else
+		return false
+	end
+end
+
 -- function cute.Mbf() --Mangle: Bear Form
 	-- cute.initial()
 	-- if incom and ubid(p,bf) and cd(mbf)==0 and hastar then

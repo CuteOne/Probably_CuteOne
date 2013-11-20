@@ -19,7 +19,7 @@
  }},
  
  {"768", { 		--Cat Form
-	"@cute.CF()",
+	--"@cute.CF()",
 	"!player.buff(768)",	--Cat Form
 	"!player.buff(108288)",	--Heart of the Wild	
 	"player.buff(1126)" 	--Mark of the Wild
@@ -45,12 +45,12 @@
 		"target.casting"
 	}, "target"},
 	
-	{"132469", {	--Typhoon
-		"player.spell(132469).cooldown = 0",	--Typhoon
-		"player.spell(80965).cooldown != 0",
-		"player.spell(5211).cooldown != 0",
-		"target.casting"
-	}, "target"}, 
+	-- {"132469", {	--Typhoon
+		-- "player.spell(132469).cooldown = 0",	--Typhoon
+		-- "player.spell(80965).cooldown != 0",
+		-- "player.spell(5211).cooldown != 0",
+		-- "target.casting"
+	-- }, "target"}, 
 	
 	{"22570", {		--Maim
 		"@cute.MA()",
@@ -307,7 +307,7 @@
 		"player.buff(768)", --Cat Form
 		"!player.buff(5215)", --Prowl
 		"player.range <= 8",
-		"player.combopoints < 5", 
+		--"player.combopoints < 5", 
 		"!player.buff(106731)" --Incarnation: King of the Jungle
 	}, "target"}, 
 	
