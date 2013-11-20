@@ -155,7 +155,7 @@
  }, "modifier.cooldowns"},
  
  {{		--Multitarget Rotation
- 
+	 
 	{"770", {	--Faerie Fire AoE
 		"@cute.FF()",
 		"player.range <= 8",
@@ -299,7 +299,7 @@
 		"player.buff(768)", --Cat Form
 		"!player.buff(5215)", --Prowl
 		"player.range <= 8",
-		--"player.combopoints < 5",
+		"player.combopoints < 5",
 		"!player.buff(102534)" --Incarnation: King of the Jungle
 	}, "target"}, 
 	
@@ -307,7 +307,7 @@
 		"player.buff(768)", --Cat Form
 		"!player.buff(5215)", --Prowl
 		"player.range <= 8",
-		--"player.combopoints < 5", 
+		"player.combopoints < 5", 
 		"!player.buff(106731)" --Incarnation: King of the Jungle
 	}, "target"}, 
 	

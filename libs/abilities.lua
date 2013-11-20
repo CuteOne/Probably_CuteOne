@@ -64,7 +64,7 @@ end
 
 function cute.FB() --Ferocious Bite
 	if not cute.HaveBuff("player",{139121,139117,139120})
-		and ((cute.thp()<=25 and ((cute.rpr() > 0 and cute.rpr()<=4) or cute.ttd("target")<=4)) 
+		and ((cute.thp()<=25 and ((cute.rpr() > 0 and cute.rpr()<=2) or cute.ttd("target")<=4)) 
 			or (cute.rpp() < 108 and cute.rpr() > 6 and GetComboPoints("player") >= 5 and cute.pow() >= 50)) 
 	then
 		return true
@@ -277,7 +277,9 @@ end
 
 function cute.RP() --Rip
 	if (cute.bossID()~=63053 and cute.ttd("target") > 4) 
-		and ((GetComboPoints("player")>=5 and cute.rpr()==0) or (GetComboPoints("player")>=4 and cute.rpp()>=95 and cute.ttd("target") > 30 and cute.rrr() > 0 and cute.rrr()<=1.5) or (GetComboPoints("player")>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd("target")>=15))
+		and ((GetComboPoints("player")>=5 and cute.rpr()==0) --No Rip Present
+			or (GetComboPoints("player")>=4 and cute.rpp()>=95 and cute.ttd("target") > 30 and cute.rrr() > 0 and cute.rrr()<=1.5) --Rune of Reorigination
+			or (GetComboPoints("player")>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd("target")>=15))
 	then
 		return true
 	else
@@ -286,7 +288,7 @@ function cute.RP() --Rip
 end
 
 function cute.SR() --Savage Roar
-	if (UnitCanCooperate("player", "target")~=nil or cute.dummy()) and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
+	if (UnitCanCooperate("player", "target")==nil or cute.dummy() or (not UnitAffectingCombat("player") and UnitBuffID("player",5215))) and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
 		or ((cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0) and cute.rpr() > 0 and cute.rpr() < 10 and (12 + (GetComboPoints("player")*6))>=(cute.srr() + 12) and cute.srrpdiff() <= 4 and cute.pow()>=25)
 	then 
 		return true
