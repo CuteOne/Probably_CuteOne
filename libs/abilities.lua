@@ -210,7 +210,9 @@ function cute.Pnc() --Pounce
 end
 
 function cute.Prl() --Prowl
-	if UnitCanCooperate("player", "target")==nil then
+	if UnitCanCooperate("player", "target")==nil 
+		and not cute.dummy() 
+	then
 		return false
 	else
 		return true
