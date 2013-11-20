@@ -199,13 +199,21 @@ end
 function cute.Pnc() --Pounce
 	if not SpellIsTargeting() 
 		and UnitIsPVP("player") --Code better checks for PvP Servers
-		and not UnitCanCooperate("player", "target")  
+		and UnitCanCooperate("player", "target")~=nil  
 		and cute.behind("target")==true
 	then
 		return true
 	else
 		return false
 	end	
+end
+
+function cute.Prl() --Prowl
+	if UnitCanCooperate("player", "target")==nil then
+		return false
+	else
+		return true
+	end
 end
 
 function cute.RK() --Rake
@@ -232,7 +240,7 @@ end
 function cute.Rvg() --Ravage: Opener
 	if not SpellIsTargeting() 
 		and (UnitBuffID("player",81022) or IsStealthed()) 
-		and not UnitCanCooperate("player", "target")  
+		and UnitCanCooperate("player", "target")~=nil
 		and UnitIsPVP("player")==nil 
 		and cute.behind("target")==true
 	then
@@ -275,7 +283,7 @@ function cute.RP() --Rip
 end
 
 function cute.SR() --Savage Roar
-	if not UnitCanCooperate("player", "target") and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
+	if UnitCanCooperate("player", "target")~=nil and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
 		or ((cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0) and cute.rpr() > 0 and cute.rpr() < 10 and (12 + (GetComboPoints("player")*6))>=(cute.srr() + 12) and cute.srrpdiff() <= 4 and cute.pow()>=25)
 	then 
 		return true
