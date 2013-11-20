@@ -133,6 +133,7 @@ function cute.MglOp() --Mangle: Opener
 	if not SpellIsTargeting() 
 		and (UnitLevel("player") < 54 or cute.GlyphCheck(127540)==false	or cute.behind("target")==false) 
 		and UnitIsPVP("player")==nil
+		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())  
 	then
 		return true
 	else
@@ -199,7 +200,7 @@ end
 function cute.Pnc() --Pounce
 	if not SpellIsTargeting() 
 		and UnitIsPVP("player") --Code better checks for PvP Servers
-		and UnitCanCooperate("player", "target")~=nil  
+		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())  
 		and cute.behind("target")==true
 	then
 		return true
@@ -240,7 +241,7 @@ end
 function cute.Rvg() --Ravage: Opener
 	if not SpellIsTargeting() 
 		and (UnitBuffID("player",81022) or IsStealthed()) 
-		and UnitCanCooperate("player", "target")~=nil
+		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())
 		and UnitIsPVP("player")==nil 
 		and cute.behind("target")==true
 	then
@@ -283,7 +284,7 @@ function cute.RP() --Rip
 end
 
 function cute.SR() --Savage Roar
-	if UnitCanCooperate("player", "target")~=nil and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
+	if (UnitCanCooperate("player", "target")~=nil or cute.dummy()) and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
 		or ((cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0) and cute.rpr() > 0 and cute.rpr() < 10 and (12 + (GetComboPoints("player")*6))>=(cute.srr() + 12) and cute.srrpdiff() <= 4 and cute.pow()>=25)
 	then 
 		return true
