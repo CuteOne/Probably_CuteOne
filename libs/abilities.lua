@@ -208,14 +208,6 @@ function cute.Pnc() --Pounce
 	end	
 end
 
-function cute.Prl()
-	if not UnitCanCooperate("player", "target")  then
-		return true
-	else
-		return false
-	end
-end
-
 function cute.RK() --Rake
 	if (cute.rrr() > 0.5 and cute.rkr() < 9 and cute.rrr()<=1.5) 
 		or cute.rkr() < 3
