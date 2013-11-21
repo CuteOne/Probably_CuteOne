@@ -1,15 +1,15 @@
 -- Initialize tables
 if not cute then cute = {} end
- --cute.ttd("target")
- --cute.GroupInfo()
- --cute.behind()
--- --cute.SymMem()
---cute.dummy()
---cute.timecheck()
 
-function cute.Ber() --Berserk
-	if cute.ttd("target")>=18
-	then 
+function cute.Ber()	--Berserk
+	if cute.ubid(cute.p(),768)	--Cat Form
+		and cute.pow() >= 75
+		and cute.ubid(cute.p(), 52610)	--Savage Roar
+		and cute.ubid(cute.p(), 5217)	--Tiger's Fury
+		and cute.sir(cute.gsi(33876),cute.t())
+		and cute.cd(5217) > 6
+		and cute.ttd(cute.t())>=18
+	then
 		return true
 	else
 		return false
@@ -17,8 +17,8 @@ function cute.Ber() --Berserk
 end
 
 function cute.Cy() --Cyclone
-	if UnitExists("focus") 
-		and IsSpellInRange(GetSpellInfo(33786),"focus")==1  
+	if cute.exists(cute.foc()) 
+		and cute.sir(cute.gsi(33786),cute.foc())
 	then
 		return true
 	else
@@ -27,11 +27,15 @@ function cute.Cy() --Cyclone
 end
 
 function cute.RB() --Rebirth
-	if UnitExists("mouseover") 
+	if cute.exists("mouseover") 
 		and UnitIsDeadOrGhost("mouseover") 
-		and UnitCanCooperate("player", "mouseover")     
+		and not cute.attack(cute.p(), "mouseover")   
 		--and not cute.LineOfSight("mouseover")
-		and IsSpellInRange(GetSpellInfo(20484),"mouseover")==1 
+		and not cute.pcasting()
+		and UnitChannelInfo(cute.p())==nil
+		and cute.sir(cute.gsi(20484),"mouseover") 
+		and cute.ubid(cute.p(),69369)
+		and cute.cd(20484)==0
 	then
 		return true
 	else
@@ -40,11 +44,14 @@ function cute.RB() --Rebirth
 end
 
 function cute.RV() --Revive
-	if UnitCanCooperate("player", "mouseover")     
+	if not UnitAffectingCombat(cute.p())
+		and cute.exists("mouseover") 
+		and UnitIsDeadOrGhost("mouseover") 
+		and not cute.attack(cute.p(), "mouseover")   
 		--and not cute.LineOfSight("mouseover")
-		and IsSpellInRange(GetSpellInfo(20484),"mouseover")==1
-		and UnitExists("mouseover")
-		and UnitIsDeadOrGhost("mouseover")
+		and not cute.pcasting()
+		and not cute.pchannel()
+		and cute.sir(cute.gsi(20484),"mouseover")
 	then
 		return true
 	else
@@ -53,7 +60,7 @@ function cute.RV() --Revive
 end
 
 function cute.FF() --Faerie Fire
-	if (UnitAffectingCombat("player")==1 or (UnitAffectingCombat("player")==nil and select(2,IsInInstance())=="none")) 
+	if (cute.combat() or (not cute.combat() and select(2,IsInInstance())=="none")) 
 		and (cute.war()==0 or cute.wac() < 3) 
 	then 
 		return true
@@ -63,23 +70,34 @@ function cute.FF() --Faerie Fire
 end
 
 function cute.FB() --Ferocious Bite
-	if not cute.HaveBuff("player",{139121,139117,139120})
-		and ((cute.thp()<=25 and ((cute.rpr() > 0 and cute.rpr()<=2) or cute.ttd("target")<=4)) 
-			or (cute.rpp() < 108 and cute.rpr() > 6 and GetComboPoints("player") >= 5 and cute.pow() >= 50)) 
+	if cute.ubid(cute.p(), 768)
+		and cute.pow() >= 25
+		and not cute.HaveBuff(cute.p(), {139121,139117,139120})
+		and cute.srr() > 0
 	then
-		return true
+		if cute.thp()<=25 and ((cute.rpr() > 0 and cute.rpr()<=4) or cute.ttd(t)<=4) then
+			return true
+		elseif cute.rpp() < 108 and cute.rpr() > 6 and cute.cp()>=5 and cute.pow()>=50 then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
 end
 
 function cute.CF() --Cat Form
-	if not ((UnitCastingInfo("player") and select(9,UnitCastingInfo("player"))) or select(8,UnitChannelInfo("player"))) 
-		and (((UnitAffectingCombat("player")==1 or IsOutdoors()==nil) 
-			and not (IsMounted() or UnitBuffID("player",40120))) 
-				or (UnitExists("target") and not UnitBuffID("player",768)))
-	then
-		return true
+	if not cute.pcasting() and not cute.pchannel() then
+		if (((cute.combat() or IsOutdoors()==nil) 
+			and not cute.ubid(cute.p(),768) 
+			and not (IsMounted() or cute.ubid(cute.p(),40120)))) 
+				--or (cute.exists(cute.t()) and not cute.ubid(cute.p(),768)))
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
@@ -105,7 +123,7 @@ function cute.TrF() --Travel Form
 end
 
 function cute.HT() --Healing Touch
-	if cute.psr() < 1.5 or GetComboPoints("player")>=4 then
+	if cute.psr() < 1.5 or cute.cp()>=4 then
 		return true
 	else
 		return false
@@ -131,9 +149,9 @@ end
 
 function cute.MglOp() --Mangle: Opener
 	if not SpellIsTargeting() 
-		and (UnitLevel("player") < 54 or cute.GlyphCheck(127540)==false	or cute.behind("target")==false) 
-		and UnitIsPVP("player")==nil
-		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())  
+		and (cute.plvl() < 54 or cute.GlyphCheck(127540)==false	or not cute.behind(cute.t())) 
+		and UnitIsPVP(cute.p())==nil
+		and cute.attack()  
 	then
 		return true
 	else
@@ -142,8 +160,8 @@ function cute.MglOp() --Mangle: Opener
 end
 
 function cute.Mgl() --Mangle
-	if (GetComboPoints("player") < 5 or UnitBuffID("player",135700))
-		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())  
+	if (cute.cp() < 5 or cute.ubid(cute.p(),135700))
+		and cute.attack()
 	then
 		return true
 	else
@@ -162,7 +180,7 @@ end
 
 function cute.MotW() --Mark of the Wild
 	cute.GroupInfo()
-	if (not IsMounted() or UnitBuffID("player",40120)) then
+	if (not IsMounted() or cute.ubid(cute.p(),40120)) then
 		for i=1,#cutemembers do 
 			if not cute.HaveBuff(cutemembers[i].Unit,{115921,20217,1126,90363}) 
 				and (#cutemembers==select(5,GetInstanceInfo()) or select(2,IsInInstance())=="none") 
@@ -189,17 +207,18 @@ end
 function cute.Pause() --Pause
 	if IsMounted()
 		or SpellIsTargeting()
-		or not UnitExists("target")
-		or UnitBuffID("player",80169)
-		or UnitBuffID("player",87959)
-		or UnitChannelInfo("player") 
-		or UnitIsDeadOrGhost("player") 
-		or UnitIsDeadOrGhost("target")
-		or UnitBuffID("target",117961) --Impervious Shield - Qiang the Merciless
-		or UnitDebuffID("player",135147) --Dead Zone - Iron Qon: Dam'ren
-		or UnitBuffID("target",143593) --Defensive Stance - General Nagrazim
-		or UnitBuffID("target",140296) --Conductive Shirld - Thunder Lord / Lightning Guardian
-		or not UnitAffectingCombat("Player")
+		or not cute.exists(cute.t())
+		or cute.ubid(cute.p(),80169)
+		or cute.ubid(cute.p(),87959)
+		or cute.pcasting()
+		or cute.pchannel()
+		or UnitIsDeadOrGhost(cute.p()) 
+		or UnitIsDeadOrGhost(cute.t())
+		or cute.ubid(cute.t(),117961) --Impervious Shield - Qiang the Merciless
+		or cute.udbid(cute.p(),135147) --Dead Zone - Iron Qon: Dam'ren
+		or cute.ubid(cute.t(),143593) --Defensive Stance - General Nagrazim
+		or cute.ubid(cute.t(),140296) --Conductive Shirld - Thunder Lord / Lightning Guardian
+		or not cute.combat
 	then 
 		return true 
 	else
@@ -209,9 +228,9 @@ end
 
 function cute.Pnc() --Pounce
 	if not SpellIsTargeting() 
-		and UnitIsPVP("player") --Code better checks for PvP Servers
-		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())  
-		and cute.behind("target")==true
+		and UnitIsPVP(cute.p()) --Code better checks for PvP Servers
+		and cute.combat()
+		and cute.behind(cute.t())
 	then
 		return true
 	else
@@ -220,21 +239,23 @@ function cute.Pnc() --Pounce
 end
 
 function cute.Prl() --Prowl
-	if UnitCanCooperate("player", "target")==nil 
-		and not cute.dummy() 
-	then
-		return false
-	else
+	if cute.attack() then
 		return true
+	else
+		return false
 	end
 end
 
 function cute.RK() --Rake
-	if (cute.rrr() > 0.5 and cute.rkr() < 9 and cute.rrr()<=1.5) 
-		or cute.rkr() < 3
-		or ((cute.ttd("target")-cute.rkr()) > 3 and (cute.crkd() > cute.rkd() or (cute.rkr() < 3 and cute.rkp()>=75)))
-	then
-		return true
+	if cute.ubid(cute.p(),768) and cute.sir(cute.gsi(33876),cute.t()) and (cute.srr()>1 or cute.GlyphCheck(127540)==false) and cute.pow()>=35 then
+		if (cute.rrr() > 0.5 and cute.rkr() < 9 and cute.rrr()<=1.5)
+			or cute.rkr() < 3
+			or ((cute.ttd(cute.t())-cute.rkr()) > 3 and (cute.crkd() > cute.rkd() or (cute.rkr() < 3 and cute.rkp()>=75)))
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
@@ -242,7 +263,7 @@ end
 
 function cute.RkAoE()	--Rake AoE
 	if cute.rkr() < 3 
-		and cute.ttd("target") >= 15 
+		and cute.ttd(cute.t()) >= 15 
 	then
 		return true
 	else
@@ -252,10 +273,10 @@ end
 
 function cute.Rvg() --Ravage: Opener
 	if not SpellIsTargeting() 
-		and (UnitBuffID("player",81022) or IsStealthed()) 
-		and (UnitCanCooperate("player", "target")~=nil or cute.dummy())
-		and UnitIsPVP("player")==nil 
-		and cute.behind("target")==true
+		and (cute.ubid(cute.p(),81022) or IsStealthed()) 
+		and cute.attack()
+		and UnitIsPVP(cute.p())==nil 
+		and cute.behind(cute.t())
 	then
 		return true
 	else
@@ -265,8 +286,8 @@ end
 
 function cute.Rej() --Rejuvination
 	if  not SpellIsTargeting()
-		and (UnitAffectingCombat("player")~=1 or UnitLevel("player")<26) 
-		and not UnitBuffID("player",774) 
+		and (not cute.combat() or cute.plvl()<26) 
+		and not cute.ubid(cute.p(),774) 
 	then 
 		return true
 	else
@@ -276,7 +297,7 @@ end
 
 -- function cute.RC() --Remove Corruption
 	-- cute.initial()
-	-- if ValidDispel("player") and cd(rc)==0 and cp > 0 and pow>=35 and ((select(2,GetInstanceInfo())~="arena" and select(2,GetInstanceInfo())~="pvp") or outcom) then
+	-- if ValidDispel(cute.p()) and cd(rc)==0 and cp > 0 and pow>=35 and ((select(2,GetInstanceInfo())~="arena" and select(2,GetInstanceInfo())~="pvp") or outcom) then
 		-- return true
 	-- elseif ValidDispel("mouseover") and cd(rc)==0 then
 		-- return true
@@ -286,20 +307,23 @@ end
 -- end
 
 function cute.RP() --Rip
-	if (cute.bossID()~=63053 and cute.ttd("target") > 4) 
-		and ((GetComboPoints("player")>=5 and cute.rpr()==0) --No Rip Present
-			or (GetComboPoints("player")>=4 and cute.rpp()>=95 and cute.ttd("target") > 30 and cute.rrr() > 0 and cute.rrr()<=1.5) --Rune of Reorigination
-			or (GetComboPoints("player")>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd("target")>=15))
-	then
-		return true
+	if cute.ubid(cute.p(),768) and cute.pow()>=30 and cute.srr() > 1 and cute.bossID()~=63053 and cute.ttd(cute.t()) > 4 then
+		if ((cute.cp()>=5 and cute.rpr()==0) --No Rip Present
+			or (cute.cp()>=4 and cute.rpp()>=95 and cute.ttd(cute.t()) > 30 and cute.rrr() > 0 and cute.rrr()<=1.5) --Rune of Reorigination
+			or (cute.cp()>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd(cute.t())>=15))
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
 end
 
 function cute.SR() --Savage Roar
-	if (UnitCanCooperate("player", "target")==nil or cute.dummy() or (not UnitAffectingCombat("player") and UnitBuffID("player",5215))) and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0))
-		or ((cute.GlyphCheck(127540)==true or GetComboPoints("player") > 0) and cute.rpr() > 0 and cute.rpr() < 10 and (12 + (GetComboPoints("player")*6))>=(cute.srr() + 12) and cute.srrpdiff() <= 4 and cute.pow()>=25)
+	if (cute.attack() or (not cute.combat and cute.ubid(cute.p(),5215))) and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or cute.cp() > 0))
+		or ((cute.GlyphCheck(127540)==true or cute.cp() > 0) and cute.rpr() > 0 and cute.rpr() < 10 and (12 + (cute.cp()*6))>=(cute.srr() + 12) and cute.srrpdiff() <= 4 and cute.pow()>=25)
 	then 
 		return true
 	else
@@ -308,8 +332,8 @@ function cute.SR() --Savage Roar
 end
 
 function cute.FRvg() --Ravage: Filler
-	if (UnitBuffID("player",102543) and cute.pow()>=45) 
-		or UnitBuffID("player",81022) 
+	if (cute.ubid(cute.p(),102543) and cute.pow()>=45) 
+		or cute.ubid(cute.p(),81022) 
 	then
 		return true
 	else
@@ -318,7 +342,7 @@ function cute.FRvg() --Ravage: Filler
 end
 
 function cute.RkF() --Rake: Filler
-	if (cute.ttd("target") - cute.rkr()) > 3 and ((cute.crkd() * ((cute.rkr()/3) + 1)) - (cute.rkd() * (cute.rkr()/3))) > cute.mgld() then
+	if (cute.ttd(cute.t()) - cute.rkr()) > 3 and ((cute.crkd() * ((cute.rkr()/3) + 1)) - (cute.rkd() * (cute.rkr()/3))) > cute.mgld() then
 		return true
 	else
 		return false
@@ -326,8 +350,8 @@ function cute.RkF() --Rake: Filler
 end
 
 function cute.ShrF() --Shred: Filler (Glyph)
-	if ((UnitBuffID("player",106951) or UnitBuffID("player",106951) or select(2, GetPowerRegen("player"))>=15) and cute.GlyphCheck(127540)==true 
-		or cute.behind("target")==true)
+	if ((cute.ubid(cute.p(),106951) or cute.ubid(cute.p(),106951) or cute.repow()>=15) and cute.GlyphCheck(127540)==true 
+		or cute.behind(cute.t()))
 	then
 		return true
 	else
@@ -345,11 +369,20 @@ end
 -- end
 
 function cute.Thr() --Thrash
-	if ((cute.ttd("target")>=6 and (cute.bossID() ~= 69700 or cute.bossID() ~= 69701)) 
-		and ((cute.thrr() < 9 and cute.rrr() > 0 and cute.rrr()<=1.5 and cute.rpr() > 0)
-			or (cute.thrr()<=3 and cute.rpr() > 3 and cute.rkr() > 3 and UnitBuffID("player",135700))))
+	if cute.ubid(cute.p(),768)
+		and cute.plvl()>=28
+		and (cute.pow()>=50 or cute.ubid(cute.p(),135700))
+		and cute.sir(cute.gsi(33876),cute.t())==1
+		and cute.ttd(cute.t())>=6
+		and (cute.bossID()~=69700 or cute.bossID()~=69701)
 	then
-		return true
+		if ((cute.thrr() < 9 and cute.rrr() > 0 and cute.rrr()<=1.5 and cute.rpr() > 0)
+			or (cute.thrr()<=3 and cute.rpr() > 3 and cute.rkr() > 3))
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
@@ -365,7 +398,7 @@ end
 -- end
 
 function cute.ThrAoE() --Thrash: AoE
-	if cute.pow()>=50 and cute.rrr() > 0 or cute.thrr() < 3 or (UnitBuffID("player",5217) and cute.thrr() < 9) then 
+	if cute.pow()>=50 and cute.rrr() > 0 or cute.thrr() < 3 or (cute.ubid(cute.p(),5217) and cute.thrr() < 9) then 
 		return true
 	else
 		return false
@@ -373,7 +406,7 @@ function cute.ThrAoE() --Thrash: AoE
 end
 
 function cute.KotJ() --Tier 4 Talent: King of the Jungle
-	if cute.ttd("target")>=15 then 
+	if cute.ttd(cute.t())>=15 then 
 		return true
 	else
 		return false
@@ -381,10 +414,10 @@ function cute.KotJ() --Tier 4 Talent: King of the Jungle
 end
 
 function cute.FoN() --Tier 4 Talent: Force of Nature
-	if (((cute.dex() > 0 and cute.dex()<=1) or UnitBuffID("player",146310)) and GetSpellCharges(106737)> 0)
+	if (((cute.dex() > 0 and cute.dex()<=1) or cute.ubid(cute.p(),146310)) and GetSpellCharges(106737)> 0)
 		or (GetSpellCharges(106737) == 3 and cute.rrr()==0 and cute.rscr()==0 and cute.Nova_CheckLastCast(106737,1))
 		or (((cute.rscr() < 5 and cute.rscbuff()==10) or (cute.rrr() > 0 and cute.rrr() < 1)) and GetSpellCharges(106737) > 0)
-		or (cute.ttd("target") < 20 and GetSpellCharges(106737) > 0)
+		or (cute.ttd(cute.t()) < 20 and GetSpellCharges(106737) > 0)
 	then
 		return true
 	else
@@ -406,7 +439,7 @@ function cute.HotW() --Tier 6 Talent: Heart of the Wild
 end
 
 function cute.NV() --Tier 6 Talent: Nature's Vigil
-	if cute.ttd("target")>=15 then 
+	if cute.ttd(cute.t())>=15 then 
 		return true
 	else
 		return false

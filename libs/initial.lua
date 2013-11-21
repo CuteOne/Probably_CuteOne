@@ -2,7 +2,7 @@
 if not cute then cute = {} end
 
 -- Data File Functions
--- cute.ttd("target")
+-- cute.ttd(cute.t())
  --cute.GroupInfo()
  --cute.behind()
 -- --cute.SymMem()
@@ -104,7 +104,7 @@ if not cute then cute = {} end
 ------BUFF/DEBUFF TRACKING------
 -- Damage Formulas	
 function cute.dcb() 		--Dream of Cenarius Damage Modifier
-	if select(4,UnitBuffID("player",145152)) == nil then
+	if select(4,cute.ubid(cute.p(),145152)) == nil then
 		return 1
 	else 
 		return 1.3
@@ -112,17 +112,17 @@ function cute.dcb() 		--Dream of Cenarius Damage Modifier
 end
 
 function cute.mgld() 		--Potential Mangle Damage
-	return (((((select(1, UnitDamage("player")) + select(2, UnitDamage("player")))/2)/2)*5)+(390*select(7,UnitDamage("player"))))*cute.dcb()
+	return (((((select(1, UnitDamage(cute.p())) + select(2, UnitDamage(cute.p())))/2)/2)*5)+(390*select(7,UnitDamage(cute.p()))))*cute.dcb()
 end
 
 function cute.crkd() 		--Potential Rake Dot Damage
-	return ((118 + (0.368 * UnitAttackPower('player'))) * (1 + GetMasteryEffect() / 100) * 0.8154868 * select(7, UnitDamage('player')))*cute.dcb()
-	--return floor((99 + (0.3*UnitAttackPower("player")))*(1+(GetMasteryEffect()/100))*select(7, UnitDamage('player')))*cute.dcb()
+	return ((118 + (0.368 * UnitAttackPower(cute.p()))) * (1 + GetMasteryEffect() / 100) * 0.8154868 * select(7, UnitDamage(cute.p())))*cute.dcb()
+	--return floor((99 + (0.3*UnitAttackPower(cute.p())))*(1+(GetMasteryEffect()/100))*select(7, UnitDamage('player')))*cute.dcb()
 end
 
 function cute.rkd() 		--Active Rake Dot Damage
-	if cute.nDbDmg("target",1822,"player")~=nil then
-		return cute.nDbDmg("target",1822,"player")
+	if cute.nDbDmg(cute.t(),1822,cute.p())~=nil then
+		return cute.nDbDmg(cute.t(),1822,cute.p())
 	else
 		return 1
 	end
@@ -133,12 +133,12 @@ function cute.rkp() 		--Percent Potential Rake Dot to Active Rake Dot
 end
 
 function cute.crpd() 		--Potential Rip Dot Damage
-	return (floor(113 + 320 * GetComboPoints("player") * (1+(GetMasteryEffect()/100)) + 0.04851 * GetComboPoints("player") * UnitAttackPower("player") * (1+(GetMasteryEffect()/100)))*select(7, UnitDamage('player')))*cute.dcb()
+	return (floor(113 + 320 * cute.cp() * (1+(GetMasteryEffect()/100)) + 0.04851 * cute.cp() * UnitAttackPower(cute.p()) * (1+(GetMasteryEffect()/100)))*select(7, UnitDamage(cute.p())))*cute.dcb()
 end
 	
 function cute.rpd() 		--Active Rip Dot Damage
-	if cute.nDbDmg("target",1079,"player")~=nil then
-		return cute.nDbDmg("target",1079,"player")
+	if cute.nDbDmg(cute.t(),1079,cute.p())~=nil then
+		return cute.nDbDmg(cute.t(),1079,cute.p())
 	else
 		return 1
 	end
@@ -150,10 +150,10 @@ end
 
 -- Duration Tracking
 function cute.rpr() 		--Rip Duration Tracking
-	if UnitDebuffID("target",1079,"player") and UnitLevel("player") >= 20 then
-		return (select(7, UnitDebuffID("target",1079,"player")) - GetTime())
+	if cute.udbid(cute.t(),1079,cute.p()) and cute.plvl() >= 20 then
+		return (select(7, cute.udbid(cute.t(),1079,cute.p())) - GetTime())
 	else
-		if UnitLevel("player") < 20 then
+		if cute.plvl() < 20 then
 			return 999
 		else
 			return 0
@@ -162,18 +162,18 @@ function cute.rpr() 		--Rip Duration Tracking
 end
 
 function cute.rkr()			--Rake Duration Tracking
-	if UnitDebuffID("target",1822,"player") then
-		return (select(7, UnitDebuffID("target",1822,"player")) - GetTime())
+	if cute.udbid(cute.t(),1822,cute.p()) then
+		return (select(7, cute.udbid(cute.t(),1822,cute.p())) - GetTime())
 	else
 		return 0
 	end
 end
 
 function cute.srr() 		--Savage Roar Duration Tracking
-	if UnitBuffID("player",127538) and UnitLevel("player") >= 18 then
-		return (select(7, UnitBuffID("player",127538)) - GetTime())
+	if cute.ubid(cute.p(),127538) and cute.plvl() >= 18 then
+		return (select(7, cute.ubid(cute.p(),127538)) - GetTime())
 	else
-		if UnitLevel("player") < 18 then
+		if UnitLevel(cute.p()) < 18 then
 			return 999
 		else
 			return 0
@@ -182,52 +182,52 @@ function cute.srr() 		--Savage Roar Duration Tracking
 end
 
 function cute.thrr()		--Trash Duration Tracking
-	if UnitDebuffID("target",106830,"player") then
-		return (select(7, UnitDebuffID("target",106830,"player")) - GetTime())
+	if cute.udbid(cute.t(),106830,cute.p()) then
+		return (select(7, cute.udbid(cute.t(),106830,cute.p())) - GetTime())
 	else
 		return 0
 	end
 end
 
 function cute.rrr() 		--Rune of Reorigination Duration Tracking
-	if UnitBuffID("player",139121) then
-		return (select(7, UnitBuffID("player",139121)) - GetTime())
-	elseif UnitBuffID("player",139117) then
-		return (select(7, UnitBuffID("player",139117)) - GetTime())
-	elseif UnitBuffID("player",139120) then
-		return (select(7, UnitBuffID("player",139120)) - GetTime())
+	if cute.ubid(cute.p(),139121) then
+		return (select(7, cute.ubid(cute.p(),139121)) - GetTime())
+	elseif cute.ubid(cute.p(),139117) then
+		return (select(7, cute.ubid(cute.p(),139117)) - GetTime())
+	elseif cute.ubid(cute.p(),139120) then
+		return (select(7, cute.ubid(cute.p(),139120)) - GetTime())
 	else
 		return 0
 	end
 end
 
 function cute.psr()			--Predatory Swiftness Duration Tracking
-	if UnitBuffID("player",69369) then
-		return (select(7, UnitBuffID("player",69369)) - GetTime())
+	if cute.ubid(cute.p(),69369) then
+		return (select(7, cute.ubid(cute.p(),69369)) - GetTime())
 	else
 		return 0
 	end
 end
 
 function cute.war()			-- Weakened Armor Duration Tracking
-	if UnitDebuffID("target",113746) then
-		return (select(7, UnitDebuffID("target",113746)) - GetTime())
+	if cute.udbid(cute.t(),113746) then
+		return (select(7, cute.udbid(cute.t(),113746)) - GetTime())
 	else
 		return 0
 	end
 end
 
 function cute.dex()			-- Assurance of Consequence Duration Tracking
-	if UnitBuffID("player",146308) then
-		return (select(7,UnitBuffID("player",146308)) - GetTime())
+	if cute.ubid(cute.p(),146308) then
+		return (select(7,cute.ubid(cute.p(),146308)) - GetTime())
 	else
 		return 0
 	end
 end
 
 function cute.rscr()		-- Renataki's Soul Charm Duration Tracking
-	if UnitBuffID("player", 138756) then
-		return (select(7, UnitBuffID("player", 138756)) - GetTime())
+	if cute.ubid(cute.p(), 138756) then
+		return (select(7, cute.ubid(cute.p(), 138756)) - GetTime())
 	else
 		return 0
 	end
@@ -235,16 +235,16 @@ end
 
 -- Stack Counts
 function cute.rscbuff() 	--Renataki's Soul Charm Buff Count
-	if UnitBuffID("player", 138756) then
-		return select(4,UnitBuffID("player",138737))
+	if cute.ubid(cute.p(), 138756) then
+		return select(4,cute.ubid(cute.p(),138737))
 	else
 		return 0
 	end
 end
 
 function cute.wac()			--Weakened Armer Stack Count
-	if UnitDebuffID("target",113746) then
-		return select(4, UnitDebuffID("target",113746))	
+	if cute.udbid(cute.t(),113746) then
+		return select(4, cute.udbid(cute.t(),113746))	
 	else
 		return 0
 	end
@@ -252,7 +252,7 @@ end
 
 -- Other
 function cute.srrpdiff()	--Savage Roar / Rip Tracking Comparison
-	if UnitLevel("player") >= 20 then
+	if cute.plvl() >= 20 then
 		if (cute.rpr() - cute.srr()) < 0 then
 			return -(cute.rpr() - cute.srr())
 		else
@@ -264,19 +264,10 @@ function cute.srrpdiff()	--Savage Roar / Rip Tracking Comparison
 end
 
 function cute.bossID() 		--Target ID Check
-	if UnitExists("target")~=nil then
-		return tonumber(UnitGUID("target"):sub(-13, -9), 16)
+	if cute.exists() then
+		return tonumber(UnitGUID(cute.t()):sub(-13, -9), 16)
 	else
 		return 0
 	end
 end
 
-function cute.pow()			--Energy Check (Counting for Berserk/Clearcasting)
-	if UnitBuffID("player",135700) then
-		return 999
-	elseif UnitBuffID("player",106951) then
-		return (UnitPower("player")*2)
-	else
-		return UnitPower("player")
-	end
-end

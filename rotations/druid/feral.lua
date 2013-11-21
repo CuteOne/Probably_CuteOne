@@ -10,7 +10,7 @@
 	"@cute.Pause()"
 }}, 
 
- {"!/pe aoe", {	--Toggle AoE
+ {"!/click PE_Buttons_multitarget", {	--Toggle AoE
 	"modifier.rshift",
  }},
  
@@ -84,11 +84,17 @@
 		"player.buff(106922)"
 	}}, 
 	
+	{"768", {		--Cat Form (Return from Might of Ursoc)
+		"!player.budd(768)",
+		"player.buff(106922)",
+		"player.buff(22842)",
+	}},
+	
 	{"20484", {		--Rebirth
 		"@cute.RB()",
 		"!player.casting",
 		"player.buff(69369)",	--Predatory Swiftness
-		"player.spell(20484).cooldown = 0"
+		--"player.spell(20484).cooldown = 0"
 	}, "mouseover"}, 
 	
  },},
@@ -115,13 +121,14 @@
 	
 	{"106951", {	--Berserk
 		"@cute.Ber()",
-		"player.buff(768)",					--Cat Form
-		"!player.buff(5215)",				--Prowl
-		"player.energy >= 75",
-		"player.buff(127538)",				--Savage Roar
-		"player.buff(5217)",				--Tiger's Fury
-		"player.range <= 8",
-		"player.spell(5217).cooldown > 6"	--Tiger's Fury
+		-- "player.buff(768)",					--Cat Form
+		-- "!player.buff(5215)",				--Prowl
+		-- "player.energy >= 75",
+		-- "player.buff(127538)",				--Savage Roar
+		-- "player.buff(5217)",				--Tiger's Fury
+		-- "player.range <= 8",
+		-- "player.spell(5217).cooldown > 6",	--Tiger's Fury
+		"target.boss"
 	}}, 
 	
 	{"106731", {	--Tier 4 Talent: Incarnation - King of the Jungle
@@ -239,16 +246,16 @@
 	
 	{"106830", { 	--Thrash
 		"@cute.Thr()",
-		"player.buff(768)", --Cat Form
-		"player.level >= 28",
-		"player.range <= 8" 
+		--"player.buff(768)", --Cat Form
+		--"player.level >= 28",
+		--"player.range <= 8" 
 	}, "target"}, 
 	
 	{"22568", { 	--Ferocious Bite
 		"@cute.FB()",
-		"player.buff(768)", --Cat Form
-		"player.buff(127538)", --Savage Roar
-		"player.range <= 8"
+		--"player.buff(768)", --Cat Form
+		--"player.buff(127538)", --Savage Roar
+		--"player.range <= 8"
 	}, "target"},
 	
 	{"5185", {		--Healing Touch
@@ -261,18 +268,18 @@
 	
 	{"1079", {		--Rip
 		"@cute.RP()",
-		"player.buff(768)", --Cat Form
-		"player.buff(127538)", --Savage Roar
-		"!player.buff(135700)", --Clearcasting
-		"player.range <= 8"
+		--"player.buff(768)", --Cat Form
+		--"player.buff(127538)", --Savage Roar
+		--"!player.buff(135700)", --Clearcasting
+		--"player.range <= 8"
 	}, "target"}, 
 	
 	{"1822", {		--Rake
 		"@cute.RK()",
-		"player.buff(768)", --Cat Form
-		"player.range <= 8",
-		"!player.buff(135700)",	--Clearcasting
-		"player.buff(127538)" --Savage Roar
+		--"player.buff(768)", --Cat Form
+		--"player.range <= 8",
+		--"!player.buff(135700)",	--Clearcasting
+		--"player.buff(127538)" --Savage Roar
 	}, "target"}, 
 	
 	{"6785", {		--Ravage: Combo Point Building
@@ -317,7 +324,7 @@
  
  {	-- Out of Combat
  
-	{"!/pe aoe", {	--Toggle AoE
+	{"!/click PE_Buttons_multitarget", {	--Toggle AoE
 		"modifier.rshift",
 	}},
  

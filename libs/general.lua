@@ -34,58 +34,146 @@ function UnitDebuffID(unit, spell, filter)
 end
 
 --- Global Shorthand Commands
--- function shcom()
--- t = "target"
--- p = "player"
--- foc = "focus"
--- gsi = GetSpellInfo
--- giid = GetInventoryItemID
+function cute.t() 
+	return "target"
+end
+function cute.p() 
+	return "player"
+end
+function cute.foc()
+	return "focus"
+end
+function cute.gsi(spell)
+	return GetSpellInfo(spell)
+end
+function cute.giid(unit, invslot)
+	return GetInventoryItemID(unit, invslot)
+end
 -- cast = CastSpellByName
--- cd = GetSpellCooldown
--- cp = GetComboPoints(p)
+function cute.cd(spell)
+	return GetSpellCooldown(spell)
+end
+function cute.cp()
+	return GetComboPoints("player")
+end
 -- ub = UnitBuff
--- ubid = UnitBuffID
+function cute.ubid(unit, spellid)
+	return UnitBuffID(unit, spellid)
+end
 -- ua = UnitAura
 -- udb = UnitDebuff
--- udbid = UnitDebuffID
--- pow = UnitPower(p)
--- repow = select(2, GetPowerRegen(p))
--- powmax = UnitPowerMax(p)
--- powper = (UnitPower(p) / UnitPowerMax(p))*100
--- if repow == 0 or repow==nil then
-  -- tmp = 9999999
--- else
-  -- tmp = (UnitPowerMax(p) - UnitPower(p)) * (1.0 / select(2, GetPowerRegen(p)))
--- end
--- plvl = UnitLevel(p)
--- sir = IsSpellInRange
--- incom = UnitAffectingCombat(p)==1
+function cute.udbid(unit, spellid, filter)
+	return UnitDebuffID(unit, spellid, filter)
+end
+function cute.pow()
+	return UnitPower("player")
+end
+function cute.pow()			
+	if UnitBuffID("player",135700) then
+		return 999
+	elseif UnitBuffID("player",106951) then
+		return (UnitPower("player")*2)
+	else
+		return UnitPower("player")
+	end
+end
+function cute.repow()
+	return select(2, GetPowerRegen("player"))
+end
+function cute.powmax()
+	return UnitPowerMax("player")
+end
+function cute.powper()
+	return (UnitPower("player") / UnitPowerMax("player"))*100
+end
+function cute.tmp()
+	if repow == 0 or repow==nil then
+		return 9999999
+	else
+		return (UnitPowerMax("player") - UnitPower("player")) * (1.0 / select(2, GetPowerRegen("player")))
+	end
+end
+function cute.plvl() 
+	return UnitLevel("player")
+end
+function cute.sir(spell,target)
+	if IsSpellInRange(spell,target)==1 then
+		return true
+	else
+		return false
+	end
+end
+function cute.combat()
+	if UnitAffectingCombat("player")==1 then
+		return true
+	else
+		return false
+	end
+end
 -- outcom = UnitAffectingCombat(p)~=1
--- if UnitHealthMax(p)==0 or UnitHealthMax(p)==nil then
-  -- php = 0
--- else
-  -- php = 100*(UnitHealth(p)/UnitHealthMax(p))
--- end
--- phmax = UnitHealthMax(p)
--- pchannel = select(8,UnitChannelInfo(p))
--- pcasting = (UnitCastingInfo(p) and select(9,UnitCastingInfo(p)))
--- hastar = UnitExists(t)
--- canattack =  UnitCanAttack(p,t)
--- thealth = UnitHealth(t)
--- tthp = UnitHealthMax(t)
--- if UnitHealthMax(t)==0 or UnitHealthMax(t)==nil then
-  -- thp = 0
--- else
-  -- thp = 100*(UnitHealth(t)/UnitHealthMax(t))
--- end
--- tchannel = select(8,UnitChannelInfo(t))
--- tcasting = (UnitCastingInfo(t) and select(9,UnitCastingInfo(t)))
--- if select(6,UnitCastingInfo(t))~=nil then 
-	-- tcasttime = (select(6,UnitCastingInfo(t))/1000)-GetTime()
--- else
-	-- tcasttime = 0
--- end
--- end
+function cute.php()
+	if UnitHealthMax("player")==0 or UnitHealthMax("player")==nil then
+		return 0
+	else
+		return 100*(UnitHealth("player")/UnitHealthMax("player"))
+	end
+end
+function cute.phmax()
+	return UnitHealthMax("player")
+end
+function cute.pchannel()
+	return select(8,UnitChannelInfo("player"))
+end
+function cute.pcasting()
+	return (UnitCastingInfo("player") and select(9,UnitCastingInfo("player")))
+end
+function cute.hastar()
+	if UnitExists("target") then
+		return true
+	else
+		return false
+	end
+end
+function cute.attack()
+	if UnitCanAttack("player","target") then
+		return true
+	else
+		return false
+	end
+end
+function cute.thealth()
+	return UnitHealth("target")
+end
+function cute.tthp()
+	return UnitHealthMax("target")
+end
+function cute.thp()
+	if UnitHealthMax("target")==0 or UnitHealthMax("target")==nil then
+		return 0
+	else
+		return 100*(UnitHealth("target")/UnitHealthMax("target"))
+	end
+end
+function cute.tchannel()
+	return select(8,UnitChannelInfo("target"))
+end
+function cute.tcasting()
+	return (UnitCastingInfo("target") and select(9,UnitCastingInfo("target")))
+end
+function cute.tcasttime()
+	if select(6,UnitCastingInfo("target"))~=nil then 
+		return (select(6,UnitCastingInfo(t))/1000)-GetTime()
+	else
+		return 0
+	end
+end
+function cute.exists(unit)
+	if UnitExists(unit) then
+		return true
+	else
+		return false
+	end
+end
 
 if not Nova_Notify then
  Nova_NotifyFrame = nil
