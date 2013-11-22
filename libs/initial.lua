@@ -271,3 +271,10 @@ function cute.bossID() 		--Target ID Check
 	end
 end
 
+function cute.canshr()		--Shred Check
+	if ((cute.ubid(cute.p(),106951) or cute.ubid(cute.p(),5217)) and cute.GlyphCheck(114234)) or cute.behind(cute.t()) then
+		return true
+	else
+		return false
+	end
+end

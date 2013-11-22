@@ -1,6 +1,18 @@
 -- Initialize tables
 if not cute then cute = {} end
 
+function cute.dummytest()	-- Dummy 5min DPS Test
+	if cute.exists(cute.t()) then			
+		local cTime = cute.timecheck()
+		local cDummy = cute.dummy()
+		if cTime >= 300 and cDummy then  
+			return true
+		else
+			return false
+		end
+	end
+end
+
 function cute.Ber()	--Berserk
 	if cute.ubid(cute.p(),768)	--Cat Form
 		and cute.pow() >= 75
@@ -9,6 +21,21 @@ function cute.Ber()	--Berserk
 		and cute.sir(cute.gsi(33876),cute.t())
 		and cute.cd(5217) > 6
 		and cute.ttd(cute.t())>=18
+	then
+		return true
+	else
+		return false
+	end
+end
+
+function cute.TF()	--Tiger's Fury
+	if cute.combat()
+		and cute.ubid(cute.p(),768)
+		and cute.pow()<=35
+		and cute.cd(5217)
+		and cute.sir(cute.gsi(33876),cute.t())
+		and not cute.ubid(cute.p(),106951)
+		and not cute.ubid(cute.p(),135700)
 	then
 		return true
 	else
@@ -89,7 +116,7 @@ end
 
 function cute.CF() --Cat Form
 	if not cute.pcasting() and not cute.pchannel() then
-		if (((cute.combat() or IsOutdoors()==nil) 
+		if (((cute.combat() or IsOutdoors()==nil or (cute.exists(cute.t()) and not cute.ubid(cute.p(),768)))
 			and not cute.ubid(cute.p(),768) 
 			and not (IsMounted() or cute.ubid(cute.p(),40120)))) 
 				--or (cute.exists(cute.t()) and not cute.ubid(cute.p(),768)))
@@ -123,7 +150,13 @@ function cute.TrF() --Travel Form
 end
 
 function cute.HT() --Healing Touch
-	if cute.psr() < 1.5 or cute.cp()>=4 then
+	if cute.combat() 
+		and cute.plvl()>=26 
+		and cute.TalentCheck(145152) 
+		and cute.psr() > 0 
+		and not cute.ubid(cute.p(), 145152) 
+		and (cute.psr() < 1.5 or cute.cp()>=4) 
+	then
 		return true
 	else
 		return false
@@ -159,16 +192,6 @@ function cute.MglOp() --Mangle: Opener
 	end
 end
 
-function cute.Mgl() --Mangle
-	if (cute.cp() < 5 or cute.ubid(cute.p(),135700))
-		and cute.attack()
-	then
-		return true
-	else
-		return false
-	end
-end
-
 -- function cute.Mbf() --Mangle: Bear Form
 	-- cute.initial()
 	-- if incom and ubid(p,bf) and cd(mbf)==0 and hastar then
@@ -180,7 +203,12 @@ end
 
 function cute.MotW() --Mark of the Wild
 	cute.GroupInfo()
-	if (not IsMounted() or cute.ubid(cute.p(),40120)) then
+	if (not IsMounted() or cute.ubid(cute.p(),40120)) 
+		and not cute.combat() 
+		and cute.plvl()>=62 
+		and not cute.ubid(cute.p(),104934) 
+		and not cute.ubid(cute.p(),104269) 
+	then
 		for i=1,#cutemembers do 
 			if not cute.HaveBuff(cutemembers[i].Unit,{115921,20217,1126,90363}) 
 				and (#cutemembers==select(5,GetInstanceInfo()) or select(2,IsInInstance())=="none") 
@@ -239,7 +267,7 @@ function cute.Pnc() --Pounce
 end
 
 function cute.Prl() --Prowl
-	if cute.attack() then
+	if not cute.combat() and not IsStealthed() and cute.attack() and cute.ubid(cute.p(),768) then
 		return true
 	else
 		return false
@@ -248,9 +276,15 @@ end
 
 function cute.RK() --Rake
 	if cute.ubid(cute.p(),768) and cute.sir(cute.gsi(33876),cute.t()) and (cute.srr()>1 or cute.GlyphCheck(127540)==false) and cute.pow()>=35 then
-		if (cute.rrr() > 0.5 and cute.rkr() < 9 and cute.rrr()<=1.5)
-			or cute.rkr() < 3
-			or ((cute.ttd(cute.t())-cute.rkr()) > 3 and (cute.crkd() > cute.rkd() or (cute.rkr() < 3 and cute.rkp()>=75)))
+		if cute.rrr() > 0.5 
+			and cute.rkr() < 9 
+			and cute.rrr()<=1.5 
+		then
+			return true
+		elseif cute.rkr() < 3 then
+			return true
+		elseif (cute.ttd(cute.t())-cute.rkr()) > 3 
+			and (cute.crkd() > cute.rkd() or (cute.rkr() < 3 and cute.rkp()>=75)) 
 		then
 			return true
 		else
@@ -307,10 +341,27 @@ end
 -- end
 
 function cute.RP() --Rip
-	if cute.ubid(cute.p(),768) and cute.pow()>=30 and cute.srr() > 1 and cute.bossID()~=63053 and cute.ttd(cute.t()) > 4 then
-		if ((cute.cp()>=5 and cute.rpr()==0) --No Rip Present
-			or (cute.cp()>=4 and cute.rpp()>=95 and cute.ttd(cute.t()) > 30 and cute.rrr() > 0 and cute.rrr()<=1.5) --Rune of Reorigination
-			or (cute.cp()>=5 and ((cute.rpr() < 6 and cute.thp() > 25) or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7))) and cute.ttd(cute.t())>=15))
+	if cute.ubid(cute.p(),768) 
+		and cute.pow()>=30 
+		and cute.srr() > 1 
+		and cute.bossID()~=63053 
+		and cute.ttd(cute.t()) > 4 
+	then
+		if cute.cp()>=4 
+			and cute.rpp()>=95 
+			and cute.ttd(cute.t()) > 30 
+			and cute.rrr() > 0 
+			and cute.rrr()<=1.5
+		then
+			return true
+		elseif cute.cp()>=5 
+			and cute.rpr()==0
+		then
+			return true
+		elseif cute.cp()>=5 
+			and	((cute.rpr() < 6 and cute.thp() > 25) 
+				or (cute.rpp() > 108 and (cute.rscbuff() == 0 or cute.rscbuff>=7)) 
+			and cute.ttd(cute.t())>=15)
 		then
 			return true
 		else
@@ -322,38 +373,109 @@ function cute.RP() --Rip
 end
 
 function cute.SR() --Savage Roar
-	if (cute.attack() or (not cute.combat and cute.ubid(cute.p(),5215))) and (cute.srr()<=1 and cute.pow()>=25 and (cute.GlyphCheck(127540)==true or cute.cp() > 0))
-		or ((cute.GlyphCheck(127540)==true or cute.cp() > 0) and cute.rpr() > 0 and cute.rpr() < 10 and (12 + (cute.cp()*6))>=(cute.srr() + 12) and cute.srrpdiff() <= 4 and cute.pow()>=25)
-	then 
-		return true
-	else
+	if cute.ubid(cute.p(),768) and cute.cp()>=1 and cute.rpr()<=3 and cute.thp()<=25 then
 		return false
+	else
+		if not cute.ubid(cute.p(),108288) then
+			if (IsStealthed() or cute.combat()) 
+				and cute.attack() 
+				and cute.srr()<=1 
+				and cute.pow()>=25 
+				and (cute.GlyphCheck(127540) or cute.cp() > 0) 
+			then
+				return true
+			elseif	cute.combat() 
+				and (cute.GlyphCheck(127540) or cute.cp() > 0) 
+				and cute.rpr() > 0 
+				and cute.rpr() < 10 
+				and (12+(cute.cp()*6))>=(cute.srr()+12) 
+				and cute.srrpdiff()<=4 
+				and cute.pow()>=25 
+			then
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
 	end
 end
 
 function cute.FRvg() --Ravage: Filler
-	if (cute.ubid(cute.p(),102543) and cute.pow()>=45) 
-		or cute.ubid(cute.p(),81022) 
+	if cute.ubid(cute.p(),768) 
+		and cute.combat() 
+		and not IsStealthed() 
+		and cute.sir(cute.gsi(33876),cute.t()) 
+		and cute.cp() < 5 
 	then
-		return true
+		if (cute.ubid(cute.p(),102543) and cute.pow()>=45) 
+			or cute.ubid(cute.p(),81022) 
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
 end
 
 function cute.RkF() --Rake: Filler
-	if (cute.ttd(cute.t()) - cute.rkr()) > 3 and ((cute.crkd() * ((cute.rkr()/3) + 1)) - (cute.rkd() * (cute.rkr()/3))) > cute.mgld() then
-		return true
+	if cute.ubid(cute.p(),768) 
+		and cute.combat() 
+		and not IsStealthed() 
+		and cute.sir(cute.gsi(33876),cute.t()) 
+		and cute.cp() < 5 
+	then
+		if (cute.ttd(cute.t()) - cute.rkr()) > 3 
+			--and ((cute.crkd() * ((cute.rkr()/3) + 1)) - (cute.rkd() * (cute.rkr()/3))) > cute.mgld()
+			and ((cute.crkd() * (cute.rkr() + 1)) - (cute.rkd() * cute.rkr())) > cute.mgld()
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
 end
 
 function cute.ShrF() --Shred: Filler (Glyph)
-	if ((cute.ubid(cute.p(),106951) or cute.ubid(cute.p(),106951) or cute.repow()>=15) and cute.GlyphCheck(127540)==true 
-		or cute.behind(cute.t()))
+	if cute.ubid(cute.p(),768) 
+		and cute.combat() 
+		and not IsStealthed() 
+		and cute.sir(cute.gsi(33876),cute.t()) 
+		and cute.cp() < 5 
 	then
-		return true
+		if cute.canshr() 
+			and (cute.ubid(cute.p(),106951) or cute.ubid(cute.p(),106951) or cute.repow()>=15) 
+			and cute.pow()>=45
+			and not cute.ubid(cute.p(),102543)
+		then
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
+end
+
+function cute.MglF() --Mangle: Filler
+	if cute.ubid(cute.p(),768) 
+		and cute.combat() 
+		and not IsStealthed() 
+		and cute.sir(cute.gsi(33876),cute.t()) 
+		and cute.cp() < 5 
+	then
+		if cute.pow()>=35 
+			and not cute.ubid(cute.p(),106731)
+		then
+			return true
+		else
+			return false
+		end
 	else
 		return false
 	end
@@ -367,17 +489,48 @@ end
 		-- return false
 	-- end
 -- end
+function cute.ThrCC()	--Thrash: Clearcasting Proc
+	if cute.ubid(cute.p(),135700) then
+		if cute.combat() 
+			and cute.sir(cute.gsi(33876),cute.t()) 
+			and cute.ubid(cute.p(),768) 
+		then
+			if cute.plvl()>=28 
+				and cute.thrr() < 3
+				and cute.ttd(cute.t())>=6
+				and cute.rpr() > 3
+				and cute.rkr() > 3
+			then
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+	else
+		return false
+	end
+end
 
 function cute.Thr() --Thrash
-	if cute.ubid(cute.p(),768)
+	if cute.combat()
+		and cute.ubid(cute.p(),768)
 		and cute.plvl()>=28
 		and (cute.pow()>=50 or cute.ubid(cute.p(),135700))
-		and cute.sir(cute.gsi(33876),cute.t())==1
+		and cute.sir(cute.gsi(33876),cute.t())
 		and cute.ttd(cute.t())>=6
 		and (cute.bossID()~=69700 or cute.bossID()~=69701)
 	then
-		if ((cute.thrr() < 9 and cute.rrr() > 0 and cute.rrr()<=1.5 and cute.rpr() > 0)
-			or (cute.thrr()<=3 and cute.rpr() > 3 and cute.rkr() > 3))
+		if cute.thrr() < 9 
+			and cute.rrr() > 0 
+			and cute.rrr()<=1.5 
+			and cute.rpr() > 0
+		then
+			return true
+		elseif cute.thrr()<=3 
+			and cute.rpr() > 3 
+			and cute.rkr() > 3
 		then
 			return true
 		else

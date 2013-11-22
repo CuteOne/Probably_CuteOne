@@ -383,17 +383,6 @@ function cute.timecheck()				-- Rotation Timer
 	return cutecTime
 end
 
-
-if UnitExists("target") then			-- Dummy 5min DPS Test
-	local cTime = cute.timecheck()
-	local cDummy = cute.dummy()
-	if cTime >= 300 and cDummy then  
-		StopAttack()
-		ClearTarget()
-		print("5 Minute Dummy Test Concluded - Profile Stopped")
-	end
-end
-
 function cute.round2(cutenum, cuteidp)	-- Round
   cutemult = 10^(cuteidp or 0)
   return math.floor(cutenum * cutemult + 0.5) / cutemult
@@ -510,17 +499,16 @@ function cute.GlyphCheck(glyphid)
 end
 
 --- Talent Check
--- TalentCheck = nil
--- function TalentCheck(talentid)
-	-- for i=1, 18 do
-		-- if select(1,GetTalentInfo(i)) == GetSpellInfo(talentid) then
-			-- if select(5,GetTalentInfo(i))==true then
-				-- return true
-			-- end
-		-- end
-	-- end
-	-- return false
--- end
+function cute.TalentCheck(talentid)
+	for i=1, 18 do
+		if select(1,GetTalentInfo(i)) == GetSpellInfo(talentid) then
+			if select(5,GetTalentInfo(i))==true then
+				return true
+			end
+		end
+	end
+	return false
+end
 
 ------Member Check------
 function cute.CalculateHP(tar)
@@ -989,7 +977,6 @@ function cute.nDbDmg(tar, spellID, player)
       end
    end
 end
---end
 
 -- Register library
 ProbablyEngine.library.register("cute", cute)
